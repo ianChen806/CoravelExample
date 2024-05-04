@@ -1,7 +1,7 @@
 ﻿using Coravel.Invocable;
 using CoravelExample.Jobs;
 
-namespace CoravelExample.Apis;
+namespace CoravelExample.Notifies;
 
 internal class SendNotifyInvocable : IInvocable, IInvocableWithPayload<NotifyPayload>
 {

@@ -1,7 +1,12 @@
-﻿using Coravel.Queuing.Interfaces;
-using CoravelExample.Apis;
+﻿using Coravel.Events.Interfaces;
+using Coravel.Queuing.Interfaces;
+using CoravelExample.Jobs;
+using CoravelExample.Models;
+using CoravelExample.Notifies;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
-namespace CoravelExample.Jobs;
+namespace CoravelExample.Apis;
 
 internal static class WeatherEndpoints
 {
@@ -14,6 +19,10 @@ internal static class WeatherEndpoints
     {
         webApplication.MapGet("/weatherforecast", Index)
             .WithName("GetWeatherForecast")
+            .WithOpenApi();
+
+        webApplication.MapGet("/weatherforecast/newPost", NewPost)
+            .WithName("NewPost")
             .WithOpenApi();
     }
 
@@ -32,5 +41,15 @@ internal static class WeatherEndpoints
                 _strings[Random.Shared.Next(_strings.Length)]
             ))
             .ToArray();
+    }
+
+    private static Results<Ok<string>, NotFound> NewPost(IDispatcher dispatcher)
+    {
+        var title = Guid.NewGuid().ToString();
+        dispatcher.Broadcast(new BlogPostCreated(new Post()
+        {
+            Title = title
+        }));
+        return TypedResults.Ok(title);
     }
 }
