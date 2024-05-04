@@ -26,7 +26,7 @@ internal static class WeatherEndpoints
             .WithOpenApi();
     }
 
-    private static WeatherForecast[] Index(IQueue queue)
+    private static WeatherForecast[] Index(IQueue queue, MyDbContext dbContext)
     {
         var guid = queue.QueueInvocableWithPayload<SendNotifyInvocable, NotifyPayload>(new NotifyPayload()
         {
