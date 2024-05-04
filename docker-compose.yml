@@ -1,0 +1,6 @@
+﻿services:
+  coravelexample:
+    image: coravelexample
+    build:
+      context: .
+      dockerfile: Dockerfile
