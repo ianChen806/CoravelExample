@@ -15,8 +15,9 @@ builder.Services.AddTransient<ShowNowTimeJob>();
 var app = builder.Build();
 app.Services.UseScheduler(scheduler =>
 {
-    scheduler.Schedule(() => Console.WriteLine($"func: {DateTime.Now}")).EverySeconds(10);
-    scheduler.Schedule<ShowNowTimeJob>().EverySeconds(10);
+    scheduler.Schedule<ShowNowTimeJob>()
+        .DailyAtHour(1)
+        .Zoned(TimeZoneInfo.Utc);
 });
 
 if (app.Environment.IsDevelopment())
@@ -32,15 +33,13 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
+        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            (
+                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                Random.Shared.Next(-20, 55),
+                summaries[Random.Shared.Next(summaries.Length)]
+            ))
             .ToArray();
-        return forecast;
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();
