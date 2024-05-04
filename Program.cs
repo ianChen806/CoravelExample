@@ -1,4 +1,5 @@
 using Coravel;
+using Coravel.Scheduling.Schedule.Interfaces;
 using CoravelExample;
 using CoravelExample.Jobs;
 using CoravelExample.Services;
@@ -13,12 +14,15 @@ builder.Services.AddScoped<MyService>();
 builder.Services.AddTransient<ShowNowTimeJob>();
 
 var app = builder.Build();
+
 app.Services.UseScheduler(scheduler =>
-{
-    scheduler.Schedule<ShowNowTimeJob>()
-        .DailyAtHour(1)
-        .Zoned(TimeZoneInfo.Utc);
-});
+    {
+        scheduler.OnWorker("MyWorker1")
+            .Schedule<ShowNowTimeJob>().EverySeconds(10);
+        scheduler.OnWorker("MyWorker2")
+            .Schedule<ShowNowTimeJob>().EverySeconds(30);
+    })
+    .LogScheduledTaskProgress(app.Services.GetService<ILogger<IScheduler>>());
 
 if (app.Environment.IsDevelopment())
 {
