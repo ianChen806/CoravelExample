@@ -1,9 +1,20 @@
+using Coravel;
+using CoravelExample.Jobs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScheduler();
+
+builder.Services.AddTransient<ShowNowTimeJob>();
 
 var app = builder.Build();
+app.Services.UseScheduler(scheduler =>
+{
+    scheduler.Schedule(() => Console.WriteLine($"func: {DateTime.Now}")).EverySeconds(10);
+    scheduler.Schedule<ShowNowTimeJob>().EverySeconds(10);
+});
 
 if (app.Environment.IsDevelopment())
 {
