@@ -1,5 +1,7 @@
 using Coravel;
+using CoravelExample;
 using CoravelExample.Jobs;
+using CoravelExample.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScheduler();
 
+builder.Services.AddScoped<MyService>();
 builder.Services.AddTransient<ShowNowTimeJob>();
 
 var app = builder.Build();
@@ -43,8 +46,3 @@ app.MapGet("/weatherforecast", () =>
     .WithOpenApi();
 
 app.Run();
-
-public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int) (TemperatureC / 0.5556);
-}
