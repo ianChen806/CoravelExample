@@ -1,1 +1,2 @@
 - Coravel https://docs.coravel.net/Installation/
+- Coravel Pro https://www.pro.coravel.net/
